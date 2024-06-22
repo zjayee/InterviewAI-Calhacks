@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background-rgb: rgb(255, 255, 255);
+  --foreground-rgba: rgb(0, 0, 0);
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: var(--background-rgb);
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
