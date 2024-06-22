@@ -1,41 +1,13 @@
-import os
+
 from django.shortcuts import render
 import json
 from django.views.decorators.csrf import csrf_exempt
-from pymongo.database import Database
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi
-from dotenv import load_dotenv, dotenv_values 
-
 
 # Create your views here.
 from django.http import HttpResponse
 
-class DatabaseConnector:
-    client: MongoClient
-    db: Database
-    uri: str
-
-    def __init__(self):
-        # loading variables from .env file
-        load_dotenv() 
-        self.uri = os.getenv("dbURL")
-
-    def connect_to_db(self) -> None:
-        """Connects to Mongodb database"""
-        print(self.uri)
-        # Create a new client and connect to the server
-        self.client = MongoClient(self.uri, server_api=ServerApi('1'))
-        try:
-            self.client.admin.command('ping')
-            print("Pinged your deployment. You successfully connected to MongoDB!")
-        except Exception as e:
-            print(e)
-        self.db = self.client["db"]
-
-    def get_db(self) -> Database:
-        """Returns Mongodb database"""
-        return self.db
+from calhacks.session import create_session
+from calhacks.db import DatabaseConnector
 
 def hello_world(request):
     return HttpResponse("Hello, World!")
@@ -47,10 +19,17 @@ def test_db(request):
     result = database_connector.db["convo"].insert_one({"hello": "world"})
     return HttpResponse(str(result.inserted_id))
 
+@csrf_exempt
+def start_session(request):
+    json_data = json.loads(request.body.decode('utf-8'))
+    session_id = create_session(json_data["company"], json_data["job_description"], json_data["type"], int(json_data["num_q"]), json_data["resume"])
+    return HttpResponse(session_id)
+
 @csrf_exempt 
 def my_view(request):
     if request.method == 'POST':
         try:
+            print(request.body.decode('utf-8'))
             json_data = json.loads(request.body.decode('utf-8'))
             print(json_data)
             print(json_data["hello"])

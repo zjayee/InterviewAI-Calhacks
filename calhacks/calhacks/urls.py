@@ -22,4 +22,5 @@ from . import views
 urlpatterns = [
     path('', views.hello_world, name='hello_world'),
     path('db_test', view=views.test_db, name='test_db'),
+    path('create_session', view=views.start_session, name='start_session'),
 ]
