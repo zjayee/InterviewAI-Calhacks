@@ -1,3 +1,4 @@
 # Ignore env directory
 env/*
 env/Lib/site-packages/*
+.env
