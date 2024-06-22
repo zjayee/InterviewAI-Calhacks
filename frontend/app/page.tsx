@@ -49,7 +49,7 @@ export default function Home() {
     return (
       <div className="mb-[3vh] w-[80%] flex items-start flex-col gap-y-[3vh]">
         <div className="flex flex-row justify-center items-center gap-x-[10px]">
-          <h1 className="font-semibold text-[1.5rem]">Add New</h1>
+          <h1 className="font-semibold text-[1.5rem]">Start New</h1>
           <FormControl className="w-[200px]">
             <InputLabel id="demo-simple-select-label">Select Type</InputLabel>
             <Select
