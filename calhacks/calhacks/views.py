@@ -5,6 +5,7 @@ from django.views.decorators.csrf import csrf_exempt
 from pymongo.database import Database
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+from dotenv import load_dotenv, dotenv_values 
 
 
 # Create your views here.
@@ -12,24 +13,39 @@ from django.http import HttpResponse
 
 class DatabaseConnector:
     client: MongoClient
-    metadata_db: Database
-    uri = os.getenv("dbURL")
+    db: Database
+    uri: str
 
     def __init__(self):
-        pass
+        # loading variables from .env file
+        load_dotenv() 
+        self.uri = os.getenv("dbURL")
 
     def connect_to_db(self) -> None:
         """Connects to Mongodb database"""
+        print(self.uri)
         # Create a new client and connect to the server
         self.client = MongoClient(self.uri, server_api=ServerApi('1'))
-        self.metadata_db = self.client["metadata"]
+        try:
+            self.client.admin.command('ping')
+            print("Pinged your deployment. You successfully connected to MongoDB!")
+        except Exception as e:
+            print(e)
+        self.db = self.client["db"]
 
-    def get_metadata_db(self) -> Database:
+    def get_db(self) -> Database:
         """Returns Mongodb database"""
-        return self.metadata_db
+        return self.db
 
 def hello_world(request):
     return HttpResponse("Hello, World!")
+
+@csrf_exempt
+def test_db(request):
+    database_connector = DatabaseConnector()
+    database_connector.connect_to_db()
+    result = database_connector.db["convo"].insert_one({"hello": "world"})
+    return HttpResponse(str(result.inserted_id))
 
 @csrf_exempt 
 def my_view(request):
