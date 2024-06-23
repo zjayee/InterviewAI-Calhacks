@@ -39,9 +39,14 @@ def get_session(session_id: str) -> Session:
     session = Session(**session)
     return session
 
-def add_user_input(session_id: str, user_input: str) -> None:
+def add_user_input(session: Session, user_input: str) -> None:
     database_connector = DatabaseConnector()
     database_connector.connect_to_db()
-    session = get_session(session_id)
     session.text_history.append({"role": "user", "content": user_input})
-    database_connector.db["session"].update_one({"_id": session_id}, {"$set": asdict(session)})
+    database_connector.db["session"].update_one({"id": session.id}, {"$set": asdict(session)})
+
+def add_assistant_response(session: Session, assistant_response: str) -> None:
+    database_connector = DatabaseConnector()
+    database_connector.connect_to_db()
+    session.text_history.append({"role": "assistant", "content": assistant_response})
+    database_connector.db["session"].update_one({"id": session.id}, {"$set": asdict(session)})
