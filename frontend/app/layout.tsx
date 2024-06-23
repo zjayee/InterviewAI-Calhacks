@@ -8,7 +8,7 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Interview Sim",
+  title: "Interview.ai",
   description: "Live Interview Simulator",
 };
 

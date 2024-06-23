@@ -50,3 +50,108 @@ body {
   box-shadow: 0px 0px 15px 2px rgba(244, 109, 93, 0.8);
   background-color: rgba(244, 109, 93, 1);
 }
+
+.glowing-pfp {
+  box-shadow: 0px 4px 20px 4px rgba(110, 135, 237, 0.2);
+  border-radius: 50%;
+}
+
+.button-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+.audio-player,
+.video-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.audio-player,
+.video-player,
+.recorded-player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.live-player {
+  height: 200px;
+  width: 400px;
+  border: 1px solid #646cff;
+  margin-bottom: 30px;
+}
+.recorded-player video {
+  height: 400px;
+  width: 800px;
+}
+
+.shadow {
+  box-shadow: 0px 4px 20px 4px rgba(110, 135, 237, 0.2);
+}
+
+.loader {
+  width: 40px;
+  aspect-ratio: 2;
+  --_g: no-repeat radial-gradient(circle closest-side, #000 90%, #0000);
+  background: var(--_g) 0% 50%, var(--_g) 50% 50%, var(--_g) 100% 50%;
+  background-size: calc(100% / 3) 50%;
+  animation: l3 1s infinite linear;
+}
+@keyframes l3 {
+  20% {
+    background-position: 0% 0%, 50% 50%, 100% 50%;
+  }
+  40% {
+    background-position: 0% 100%, 50% 0%, 100% 50%;
+  }
+  60% {
+    background-position: 0% 50%, 50% 100%, 100% 0%;
+  }
+  80% {
+    background-position: 0% 50%, 50% 50%, 100% 100%;
+  }
+}
+
+.dashed-border {
+  border: 2px dashed #cdd8e7; /* Adjust the width and color as needed */
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes pulse {
+  0% {
+    -moz-box-shadow: 0 0 0 0 rgba(180, 0, 11, 0.4);
+    box-shadow: 0 0 0 0 rgba(180, 0, 11, 0.4);
+  }
+  70% {
+    -moz-box-shadow: 0 0 0 10px rgba(128, 2, 9, 0);
+    box-shadow: 0 0 0 10px rgba(128, 2, 9, 0);
+  }
+  100% {
+    -moz-box-shadow: 0 0 0 0 rgba(61, 0, 4, 0);
+    box-shadow: 0 0 0 0 rgba(61, 0, 4, 0);
+  }
+}
+
+.dot {
+  animation: pulse 1s infinite;
+  width: 10px;
+  height: 10px;
+  background: #f1414f;
+  border-radius: 50%;
+}
+
+.static-dot {
+  width: 10px;
+  height: 10px;
+  background: #f1414f;
+  border-radius: 50%;
+}
