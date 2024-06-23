@@ -24,7 +24,7 @@ def create_session(company: str, job_description: str, type: str, num_q: int, re
         num_q=num_q,
         resume=resume,
         text_history=[]
-    )
+    ) 
     
     # add session to db
     database_connector = DatabaseConnector()
