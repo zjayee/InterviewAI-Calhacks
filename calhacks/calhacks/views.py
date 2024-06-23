@@ -39,7 +39,6 @@ def interview_loop(request):
     audio = interviewer.get_audio_from_response(response)
     return HttpResponse(audio)
 
-
 @csrf_exempt 
 def my_view(request):
     if request.method == 'POST':
