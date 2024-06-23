@@ -22,7 +22,8 @@ def create_session(company: str, job_description: str, type: str, num_q: int, re
         type=type,
         num_q=num_q,
         resume=resume,
-        text_history=[]
+        text_history=[],
+        emotion_history=[]
     )
     
     # add session to db

@@ -29,10 +29,20 @@ def start_session(request):
     return HttpResponse(session_id)
 
 @csrf_exempt
-def start_session(request):
+def start_interview(request):
     json_data = json.loads(request.body.decode('utf-8'))
-    session_id = create_session(json_data["company"], json_data["job_description"], json_data["type"], int(json_data["num_q"]), json_data["resume"])
-    return HttpResponse(session_id)
+    session_id = json_data["session_id"]
+    session = get_session(session_id)
+    
+    interviewer = Interviewer()
+
+    prompt = generate_start_message(session)
+    response = interviewer.get_response_from_gpt(prompt)
+    add_assistant_response(session, response)
+
+    audio = interviewer.get_audio_from_response(response)
+
+    return HttpResponse(audio)
 
 @csrf_exempt
 def interview_loop(request):
