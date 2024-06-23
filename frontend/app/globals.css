@@ -112,3 +112,16 @@ body {
     background-position: 0% 50%, 50% 50%, 100% 100%;
   }
 }
+
+.dashed-border {
+  border: 2px dashed #cdd8e7; /* Adjust the width and color as needed */
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}

@@ -62,7 +62,7 @@ export default function InterviewRoom() {
           <LiveChat />
         </div>
         <div className="w-[100%] gap-y-[10px] flex flex-col items-center justify-center">
-          <ButtonContainer />
+          <ButtonContainer sessionID={searchParams.get("id")} />
           <TimerDisplay />
         </div>
       </div>
@@ -74,9 +74,9 @@ export default function InterviewRoom() {
       <div className="pb-[3vh] flex-1 items-start justify-end h-[100%] w-[100%] flex flex-col gap-y-[35px]">
         {liveChat.map((item, index) =>
           item.role == "user" ? (
-            <UserResponse />
+            <UserResponse key={index} />
           ) : (
-            <AssistantResponse responseText={item.content} />
+            <AssistantResponse key={index} responseText={item.content} />
           )
         )}
       </div>
@@ -167,23 +167,36 @@ function Header({ company, numQ }: { company: any; numQ: any }) {
   );
 }
 
-function ButtonContainer() {
+function ButtonContainer({ sessionID }: { sessionID: string | null }) {
   return (
     <div className="flex flex-row gap-x-[27px] items-center justify-center">
       <MicButton />
-      <EndButton />
+      <EndButton sessionID={sessionID} />
       <VidButton />
     </div>
   );
 }
 
-function EndButton() {
+function EndButton({ sessionID }: { sessionID: string | null }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const onEndButtonClick = () => {
+    if (sessionID) {
+      const params = new URLSearchParams(searchParams);
+      params.set("id", sessionID);
+
+      router.push("/results" + "?" + params.toString());
+    } else {
+      alert("session ID not found");
+    }
+  };
+
   return (
     <button
       className="flex justify-center items-center bg-[#F1414F] w-[70px] h-[70px] rounded-[50%]"
       type="button"
-      onClick={() => router.push("/results")}
+      onClick={onEndButtonClick}
     >
       <ImPhoneHangUp size={28} className="text-white" />
     </button>
