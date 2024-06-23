@@ -2,6 +2,8 @@ import os
 import time
 from groq import Groq
 from openai import OpenAI
+from hume import HumeBatchClient
+from hume.models.config import FaceConfig, ProsodyConfig
 
 
 class Interviewer:
@@ -9,6 +11,7 @@ class Interviewer:
     # Initialize any necessary variables or resources here
     self.open_ai_client = OpenAI()
     self.gorq_client = Groq()
+    self.hume_client = HumeBatchClient(os.getenv("HUME_API_KEY"))
   
   def get_text_from_audio(self, audio) -> str:
     input_text = self.gorq_client.audio.transcriptions.create(
@@ -43,6 +46,21 @@ class Interviewer:
     print(response.iter_bytes())
     return response.iter_bytes()
   
+  def speech_prosody_emotion_analysis(self, filebytes, result_path:str):
+    """Perform Speech prosody emotion measurement with Hume client. Save the result as .json in the specifed position
+       
+      args:
+        filebytes: the filebytes of the audio file to be analyzed
+        result_path: the path and file name to store the emotion analysis result as .json
+    """
+    config = ProsodyConfig()
+    job = self.hume_client.submit_job([], [config], filebytes=("sample audio", filebytes)) # need further change "tuple" to "list(tuples)"" when running batch analysis
+    # print(job)
+    # print("Running...")
+    details = job.await_complete()
+    job.download_predictions(result_path + ".json")
+    # print("emotion_analysis done")
+  
   # def run(self):
   #   input_text = self.get_text_from_audio()
   #   response = self.get_response_from_gpt(input_text)
@@ -53,6 +71,7 @@ if __name__ == "__main__":
   start_time = time.time()
   audio = open("sample_audio.m4a", "rb").read()
   st = time.time()
-  interviewer = Interviewer(context=[], audio=audio)
-  interviewer.run()
+  interviewer = Interviewer()
+  # interviewer.run()
+  # interviewer.speech_prosody_emotion_analysis(audio, "result_test")
   et = time.time()
