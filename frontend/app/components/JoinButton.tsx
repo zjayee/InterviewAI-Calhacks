@@ -55,9 +55,6 @@ export default function JoinButton({ formData }: { formData: sessionType }) {
         const startInterviewData = await startInterviewResponse.json();
         setIntroText(startInterviewData.text_output);
         setIntroAudio(startInterviewData.audio_output);
-        console.log("Success");
-        console.log(startInterviewData.text_output);
-        console.log(startInterviewData.audio);
 
         // Store introText and introAudio in sessionStorage
         sessionStorage.setItem("introText", startInterviewData.text_output);

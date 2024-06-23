@@ -19,9 +19,27 @@ type ChatMessage = {
 
 export default function InterviewRoom() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [responseAudio, setResponseAudio] = useState("");
   const [responseText, setResponseText] = useState("");
   const [liveChat, setLiveChat] = useState<ChatMessage[]>([]);
+
+  const numQ = Number(searchParams.get("questions"));
+
+  const sessionID = searchParams.get("id");
+
+  useEffect(() => {
+    if (liveChat.length === numQ * 2 + 1) {
+      if (sessionID) {
+        const params = new URLSearchParams(searchParams);
+        params.set("id", sessionID);
+
+        router.push("/results" + "?" + params.toString());
+      } else {
+        alert("session ID not found");
+      }
+    }
+  }, [liveChat]);
 
   useEffect(() => {
     // Fetch introText and introAudio from sessionStorage
@@ -94,7 +112,7 @@ export default function InterviewRoom() {
       <div className="pb-[3vh] flex-1 items-start justify-end h-[100%] w-[100%] flex flex-col gap-y-[35px]">
         {liveChat.map((item, index) =>
           item.role == "user" ? (
-            <UserResponse key={index} />
+            <UserResponse key={index} isDone={index + 1 !== liveChat.length} />
           ) : (
             <AssistantResponse key={index} responseText={item.content} />
           )
@@ -103,12 +121,10 @@ export default function InterviewRoom() {
     );
   }
 
-  function UserResponse() {
+  function UserResponse({ isDone }: { isDone: boolean }) {
     const now = new Date();
     const hours = now.getHours().toString().padStart(2, "0");
     const minutes = now.getMinutes().toString().padStart(2, "0");
-
-    const [isDone, setIsDone] = useState(false);
 
     return (
       <div className="flex flex-row w-[100%] gap-x-[15px]">
@@ -129,7 +145,6 @@ export default function InterviewRoom() {
           <div className="flex items-cente w-[210px] justify-center p-[20px] bg-[#EEF3FA] rounded-[15px]">
             <AudioRecorder
               isDone={isDone}
-              setIsDone={setIsDone}
               setResponseText={setResponseText}
               setResponseAudio={setResponseAudio}
               sessionID={searchParams.get("id")}

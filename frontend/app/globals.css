@@ -125,3 +125,33 @@ body {
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+@keyframes pulse {
+  0% {
+    -moz-box-shadow: 0 0 0 0 rgba(180, 0, 11, 0.4);
+    box-shadow: 0 0 0 0 rgba(180, 0, 11, 0.4);
+  }
+  70% {
+    -moz-box-shadow: 0 0 0 10px rgba(128, 2, 9, 0);
+    box-shadow: 0 0 0 10px rgba(128, 2, 9, 0);
+  }
+  100% {
+    -moz-box-shadow: 0 0 0 0 rgba(61, 0, 4, 0);
+    box-shadow: 0 0 0 0 rgba(61, 0, 4, 0);
+  }
+}
+
+.dot {
+  animation: pulse 1s infinite;
+  width: 10px;
+  height: 10px;
+  background: #f1414f;
+  border-radius: 50%;
+}
+
+.static-dot {
+  width: 10px;
+  height: 10px;
+  background: #f1414f;
+  border-radius: 50%;
+}

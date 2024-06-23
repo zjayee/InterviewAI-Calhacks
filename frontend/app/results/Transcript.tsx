@@ -30,7 +30,7 @@ function UserResponse({ responseText }: { responseText: string }) {
         <div className="flex flex-row text-[0.75rem] font-light justify-between">
           <p className="text-[0.75rem]">Your answer...</p>
         </div>
-        <div className="w-[100%] p-[20px] bg-[#EEF3FA] rounded-[15px]">
+        <div className="text-[0.9rem] w-[100%] p-[20px] bg-[#EEF3FA] rounded-[15px]">
           {responseText}
         </div>
       </div>

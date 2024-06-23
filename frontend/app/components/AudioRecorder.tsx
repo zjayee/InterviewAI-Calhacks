@@ -6,6 +6,7 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
+import { FaCheckSquare, FaRegCheckSquare } from "react-icons/fa";
 
 const mimeType = "audio/webm";
 
@@ -14,14 +15,12 @@ const AudioRecorder = ({
   setResponseText,
   setResponseAudio,
   isDone,
-  setIsDone,
   numberQuestions,
 }: {
   sessionID: string | null;
   setResponseText: Dispatch<SetStateAction<string>>;
   setResponseAudio: Dispatch<SetStateAction<any>>;
   isDone: boolean;
-  setIsDone: any;
   numberQuestions: string | null;
 }) => {
   const [permission, setPermission] = useState(false);
@@ -32,7 +31,6 @@ const AudioRecorder = ({
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [audioBase64, setAudioBase64] = useState<string | null>(null);
   const [fetchingResponse, setFetchingResponse] = useState(false);
-  const [questionsLeft, setQuestionsLeft] = useState(Number(numberQuestions));
 
   const getMicrophonePermission = async () => {
     if ("MediaRecorder" in window) {
@@ -53,19 +51,6 @@ const AudioRecorder = ({
 
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  useEffect(() => {
-    if (questionsLeft < 0) {
-      if (sessionID) {
-        const params = new URLSearchParams(searchParams);
-        params.set("id", sessionID);
-
-        router.push("/results" + "?" + params.toString());
-      } else {
-        alert("session ID not found");
-      }
-    }
-  }, [questionsLeft]);
 
   const removeBase64Metadata = (base64data: string) => {
     return base64data.split(",")[1];
@@ -129,7 +114,6 @@ const AudioRecorder = ({
               setResponseAudio(responseAudioUrl);
               const responseText = responseData.text_output;
               setResponseText(responseText);
-              setIsDone(true);
             } else {
               console.error("Failed to fetch interview_loop:", response.status);
             }
@@ -152,7 +136,6 @@ const AudioRecorder = ({
     if (mediaRecorder.current && recordingStatus === "recording") {
       mediaRecorder.current.stop();
       setRecordingStatus("inactive");
-      setQuestionsLeft(questionsLeft - 1);
     }
   };
 
@@ -177,9 +160,8 @@ const AudioRecorder = ({
   };
 
   useEffect(() => {
-    // Attempt to get microphone permission immediately on component mount
     getMicrophonePermission();
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -196,32 +178,34 @@ const AudioRecorder = ({
       <main>
         {isDone ? (
           <div className="audio-player">
-            <h1 className="bg-[#6E87ED] py-[7px] px-[20px] rounded-[30px] font-medium text-[0.95rem] text-white">
-              Great Response!
+            <h1 className="font-medium w-[160px] opacity-[0.7] text-[1rem] justify-center gap-x-[8px] items-center flex flex-row">
+              Recieved
+              <FaRegCheckSquare size={20} className="opacity-[0.8]" />
             </h1>
             {/*<audio className="bg-[#EEF3FA]" src={audio} controls></audio>*/}
           </div>
         ) : (
-          <div className="audio-controls">
+          <div className="w-[170px] flex items-center justify-center">
             {!permission ? <div className="loader"></div> : null}
             {permission &&
             recordingStatus === "inactive" &&
             !fetchingResponse ? (
               <button
-                className="py-[10px] px-[15px] bg-[#6E87ED] rounded-[10px] text-white font-medium"
+                className="py-[10px] px-[15px] gap-x-[7px] items-center bg-[#6E87ED] rounded-[10px] text-white font-medium flex flex-row"
                 onClick={startRecording}
                 type="button"
               >
-                Start Recording
+                Start Answer
+                <div className="static-dot"></div>
               </button>
             ) : null}
             {recordingStatus === "recording" ? (
               <button
-                className="py-[10px] px-[15px] bg-[#6E87ED] rounded-[10px] text-white font-medium"
+                className="flex flex-row items-center gap-x-[7px] py-[10px] px-[15px] bg-[#6E87ED] rounded-[10px] text-white font-medium"
                 onClick={stopRecording}
                 type="button"
               >
-                Stop Recording
+                Finish <div className="dot"></div>
               </button>
             ) : null}
             {fetchingResponse ? <div className="loader"></div> : null}
