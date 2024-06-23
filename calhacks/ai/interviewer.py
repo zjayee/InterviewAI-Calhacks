@@ -12,7 +12,6 @@ class Interviewer:
   def __init__(self):
     # Initialize any necessary variables or resources here
     load_dotenv()
-    print(os.getenv("OPENAI_API_KEY"))
     self.open_ai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     self.gorq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
     self.hume_client = HumeBatchClient(os.getenv("HUME_API_KEY"))
@@ -70,7 +69,7 @@ class Interviewer:
     # print("emotion_analysis done")
     return job.get_predictions()[1]["results"]["predictions"][0]["models"]
 
-  def combine_audio_response_analysis(self, question:str, response_text:str, analysis) -> tuple:
+  def combine_audio_response_analysis(self, question:str, response_text:str, analysis_result:str) -> tuple:
     """Combine the question, user's response, and emotion analysis in this QA session and generate two prompt for GPT
 
       args:
@@ -80,13 +79,13 @@ class Interviewer:
       return:
         content_prompt, sentiment_prompt(tuple)
     """
-    content_prompt = [{"role":"system", "content": "You are the interviewer. Check if the interviewee's answer is off topic.",
-              "role":"assistant", "content": f"Interview question: {question}",
-              "role":"user", "content": f"Interviewee's answer: '{response_text}'",}]
+    content_prompt = [{"role":"system", "content": "Give feedback on the interviewee's response content. Keep your response under 10 words."},
+              {"role":"assistant", "content": f"Interview question: {question}"},
+              {"role":"user", "content": f"Interviewee's answer: '{response_text}'"},]
     
-    sentiment_prompt = [{"role":"system", "content": "You are an analyzer which take a previously asked the interviewed question and the corresponding interviewee's response text and also the sentiment analysis from the audio. Analyze how their emotion behavior is during the interview.",
-              "role":"assistant", "content": f"Interview question: {question}",
-              "role":"user", "content": f"Emotional Analysis Result of the interviewee's response: {json.dumps(analysis_result)}",
+    sentiment_prompt = [{"role":"system", "content": "Give feedback on the interviewee's response sentiment, give feedback on the dominant emotion. Keep your response under 10 words."},
+              {"role":"assistant", "content": f"Interview question: {question}"},
+              {"role":"user", "content": f"Emotional Analysis Result of the interviewee's response: {json.dumps(analysis_result)}",
               }]
 
     return content_prompt, sentiment_prompt

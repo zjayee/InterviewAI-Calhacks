@@ -83,6 +83,25 @@ def get_summary(request):
     return HttpResponse(json.dumps(output))
 
 @csrf_exempt
+def get_question_summary(request):
+    json_data = json.loads(request.body.decode('utf-8'))
+    session_id = json_data["session_id"]
+    session = get_session(session_id)
+
+    interviewer = Interviewer()
+    question = session.text_history[-3]["content"]
+    response = session.text_history[-2]["content"]
+    analysis_result = session.emotion_history[-1]
+    content_prompt, emotion_prompt = interviewer.combine_audio_response_analysis(question, response, analysis_result)
+
+    content_feedback = interviewer.get_response_from_gpt(content_prompt)
+    emotion_feedback = interviewer.get_response_from_gpt(emotion_prompt)
+
+    output = {"content_feedback": content_feedback, "emotion_feedback": emotion_feedback}
+    
+    return HttpResponse(json.dumps(output))
+
+@csrf_exempt
 def get_transcript(request):
     json_data = json.loads(request.body.decode('utf-8'))
     session_id = json_data["session_id"]
