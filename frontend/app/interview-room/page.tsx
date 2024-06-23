@@ -31,7 +31,7 @@ export default function InterviewRoom() {
           numQ={searchParams.get("questions")}
         />
         <div className="">
-          <AudioRecorder />
+          <AudioRecorder sessionID={searchParams.get("id")} />
         </div>
         <div className="w-[100%] gap-y-[10px] flex flex-col items-center justify-center">
           <ButtonContainer />

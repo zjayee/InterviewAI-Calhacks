@@ -15,6 +15,7 @@ export default function JoinButton({ formData }: { formData: sessionType }) {
 
   const handleJoinNow = async () => {
     const hasEmptyField = Object.values(formData).some((value) => value === "");
+    let sessionID = "";
 
     if (hasEmptyField) {
       window.alert("Please fill in all fields before submitting.");
@@ -34,8 +35,8 @@ export default function JoinButton({ formData }: { formData: sessionType }) {
         redirect: "follow",
       });
 
-      const data = await response.text();
-      console.log("Session created successfully: " + data);
+      sessionID = await response.text();
+      console.log("Session created successfully: " + sessionID);
     } catch (err) {
       console.log(err);
     }
@@ -43,6 +44,7 @@ export default function JoinButton({ formData }: { formData: sessionType }) {
     const params = new URLSearchParams(searchParams);
     params.set("company", formData.company);
     params.set("questions", formData.num_q.toString());
+    params.set("id", sessionID);
 
     router.push("/interview-room" + "?" + params.toString());
   };
