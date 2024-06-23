@@ -21,10 +21,10 @@ from . import views
 
 urlpatterns = [
     path('', views.hello_world, name='hello_world'),
-    path('db_test', view=views.test_db, name='test_db'),
     path('create_session', view=views.start_session, name='start_session'),
     path('interview_loop', view=views.interview_loop, name='interview_loop'),
     path('get_summary', view=views.get_summary, name='get_summary'),
     path('start_interview', view=views.start_interview, name='start_interview'),
     path('get_transcript', view=views.get_transcript, name='get_transcript'),
+    path('get_question_summary', view=views.get_question_summary, name='get_question_summary')
 ]

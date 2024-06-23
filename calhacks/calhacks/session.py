@@ -31,6 +31,7 @@ def create_session(company: str, job_description: str, type: str, num_q: int, re
     database_connector.connect_to_db()
     result = database_connector.db["session"].insert_one(asdict(session))
     session.id = result.inserted_id
+    database_connector.db["session"].update_one({"_id": session.id}, {"$set": {"id": str(session.id)}})
     return session.id
 
 def get_session(session_id: str) -> Session:

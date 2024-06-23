@@ -16,13 +16,6 @@ def hello_world(request):
     return HttpResponse("Hello, World!")
 
 @csrf_exempt
-def test_db(request):
-    database_connector = DatabaseConnector()
-    database_connector.connect_to_db()
-    result = database_connector.db["convo"].insert_one({"hello": "world"})
-    return HttpResponse(str(result.inserted_id))
-
-@csrf_exempt
 def start_session(request):
     json_data = json.loads(request.body.decode('utf-8'))
     session_id = create_session(json_data["company"], json_data["job_description"], json_data["type"], int(json_data["num_q"]), json_data["resume"])
@@ -41,8 +34,13 @@ def start_interview(request):
     add_assistant_response(session, response)
 
     audio = interviewer.get_audio_from_response(response)
+    # Convert iterator of bytes to a single bytes object
+    audio_bytes = b''.join(audio)
+    # Encode the bytes object into a base64 string
+    audio64 = base64.b64encode(audio_bytes).decode('utf-8')
+    output = {"audio_output": audio64, "text_output": response}
 
-    return HttpResponse(audio)
+    return HttpResponse(json.dumps(output))
 
 @csrf_exempt
 def interview_loop(request):
@@ -61,8 +59,14 @@ def interview_loop(request):
     add_assistant_response(session, response)
 
     audio = interviewer.get_audio_from_response(response)
+    # Convert iterator of bytes to a single bytes object
+    audio_bytes = b''.join(audio)
 
-    return HttpResponse(audio)
+    # Encode the bytes object into a base64 string
+    audio64 = base64.b64encode(audio_bytes).decode('utf-8')
+    output = {"audio_output": audio64, "text_output": response}
+
+    return HttpResponse(json.dumps(output))
 
 @csrf_exempt
 def get_summary(request):
@@ -73,8 +77,29 @@ def get_summary(request):
     interviewer = Interviewer()
     summary_prompt = generate_summary_prompt(session)
     response = interviewer.get_response_from_gpt(summary_prompt)
+
+    output = {"summary_analysis": response}
     
-    return HttpResponse(response)
+    return HttpResponse(json.dumps(output))
+
+@csrf_exempt
+def get_question_summary(request):
+    json_data = json.loads(request.body.decode('utf-8'))
+    session_id = json_data["session_id"]
+    session = get_session(session_id)
+
+    interviewer = Interviewer()
+    question = session.text_history[-3]["content"]
+    response = session.text_history[-2]["content"]
+    analysis_result = session.emotion_history[-1]
+    content_prompt, emotion_prompt = interviewer.combine_audio_response_analysis(question, response, analysis_result)
+
+    content_feedback = interviewer.get_response_from_gpt(content_prompt)
+    emotion_feedback = interviewer.get_response_from_gpt(emotion_prompt)
+
+    output = {"content_feedback": content_feedback, "emotion_feedback": emotion_feedback}
+    
+    return HttpResponse(json.dumps(output))
 
 @csrf_exempt
 def get_transcript(request):
