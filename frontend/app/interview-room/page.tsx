@@ -12,11 +12,31 @@ import AudioRecorder from "../components/AudioRecorder";
 import TimerDisplay from "../components/TimerDisplay";
 import Image from "next/image";
 
+type ChatMessage = {
+  role: string;
+  content: string;
+};
+
 export default function InterviewRoom() {
   const searchParams = useSearchParams();
   const [responseAudio, setResponseAudio] = useState("");
   const [responseText, setResponseText] = useState("");
-  const [liveChat, setLiveChat] = useState([{ role: "user", content: "" }]);
+  const [liveChat, setLiveChat] = useState<ChatMessage[]>([]);
+
+  useEffect(() => {
+    // Fetch introText and introAudio from sessionStorage
+    const initialText = sessionStorage.getItem("introText");
+    const initialAudio = sessionStorage.getItem("introAudio");
+
+    if (initialAudio && initialText) {
+      setLiveChat([{ role: "assistant", content: initialText }]);
+      setResponseAudio(`data:audio/wav;base64,${initialAudio}`);
+    } else {
+      alert("Initial data not found");
+      console.log(initialAudio);
+      console.log(initialText);
+    }
+  }, []);
 
   useEffect(() => {
     if (responseAudio) {
@@ -113,6 +133,7 @@ export default function InterviewRoom() {
               setResponseText={setResponseText}
               setResponseAudio={setResponseAudio}
               sessionID={searchParams.get("id")}
+              numberQuestions={searchParams.get("questions")}
             />
           </div>
         </div>

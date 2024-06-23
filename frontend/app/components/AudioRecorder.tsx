@@ -1,3 +1,4 @@
+import { useRouter, useSearchParams } from "next/navigation";
 import React, {
   useState,
   useEffect,
@@ -14,12 +15,14 @@ const AudioRecorder = ({
   setResponseAudio,
   isDone,
   setIsDone,
+  numberQuestions,
 }: {
   sessionID: string | null;
   setResponseText: Dispatch<SetStateAction<string>>;
   setResponseAudio: Dispatch<SetStateAction<any>>;
   isDone: boolean;
   setIsDone: any;
+  numberQuestions: string | null;
 }) => {
   const [permission, setPermission] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -29,6 +32,7 @@ const AudioRecorder = ({
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
   const [audioBase64, setAudioBase64] = useState<string | null>(null);
   const [fetchingResponse, setFetchingResponse] = useState(false);
+  const [questionsLeft, setQuestionsLeft] = useState(Number(numberQuestions));
 
   const getMicrophonePermission = async () => {
     if ("MediaRecorder" in window) {
@@ -46,6 +50,22 @@ const AudioRecorder = ({
       alert("The MediaRecorder API is not supported in your browser.");
     }
   };
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (questionsLeft < 0) {
+      if (sessionID) {
+        const params = new URLSearchParams(searchParams);
+        params.set("id", sessionID);
+
+        router.push("/results" + "?" + params.toString());
+      } else {
+        alert("session ID not found");
+      }
+    }
+  }, [questionsLeft]);
 
   const removeBase64Metadata = (base64data: string) => {
     return base64data.split(",")[1];
@@ -132,6 +152,7 @@ const AudioRecorder = ({
     if (mediaRecorder.current && recordingStatus === "recording") {
       mediaRecorder.current.stop();
       setRecordingStatus("inactive");
+      setQuestionsLeft(questionsLeft - 1);
     }
   };
 

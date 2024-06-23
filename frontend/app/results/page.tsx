@@ -29,7 +29,6 @@ export default function ResultPage() {
         if (summaryResponse.ok) {
           const summaryData = await summaryResponse.json();
           setSummary(summaryData.summary_analysis);
-          console.log(summaryData);
         } else {
           console.error("Failed to fetch summary:", summaryResponse.status);
         }
@@ -48,7 +47,6 @@ export default function ResultPage() {
         if (transcriptResponse.ok) {
           const transcriptData = await transcriptResponse.json();
           setTranscript(transcriptData);
-          console.log(transcriptData);
         } else {
           console.error(
             "Failed to fetch transcript:",
@@ -67,8 +65,8 @@ export default function ResultPage() {
 
   if (loading) {
     return (
-      <main className="main-container flex items-center justify-center h-[100%] w-[100%]">
-        <div className="loading"></div>
+      <main className="main-container flex items-center justify-center h-[90vh] w-[100%]">
+        <div className="loader"></div>
       </main>
     );
   }
