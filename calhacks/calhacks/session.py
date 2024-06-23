@@ -34,5 +34,14 @@ def create_session(company: str, job_description: str, type: str, num_q: int, re
 def get_session(session_id: str) -> Session:
     database_connector = DatabaseConnector()
     database_connector.connect_to_db()
-    session = database_connector.db["session"].find_one({"_id": session_id})
+    session = database_connector.db["session"].find_one({"id": session_id})
+    del session["_id"]
+    session = Session(**session)
     return session
+
+def add_user_input(session_id: str, user_input: str) -> None:
+    database_connector = DatabaseConnector()
+    database_connector.connect_to_db()
+    session = get_session(session_id)
+    session.text_history.append({"role": "user", "content": user_input})
+    database_connector.db["session"].update_one({"_id": session_id}, {"$set": asdict(session)})

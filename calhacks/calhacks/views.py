@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 from django.http import HttpResponse
 
-from calhacks.session import create_session
+from calhacks.session import create_session, get_session
 from calhacks.prompt import generate_start_message, generate_message_history
 from calhacks.db import DatabaseConnector
 from ai.interviewer import Interviewer
@@ -32,10 +32,13 @@ def start_session(request):
 def interview_loop(request):
     json_data = json.loads(request.body.decode('utf-8'))
     session_id = json_data["session_id"]
-    user_audio = base64.decodebytes(json_data["user_audio"])
+    print("sessionid: " +session_id)
+    session = get_session(session_id)
+    print(session)
+    user_audio = base64.b64decode(json_data["user_audio"])
     interviewer = Interviewer()
     text = interviewer.get_text_from_audio(user_audio)
-    prompt = generate_message_history(text)
+    prompt = generate_message_history(session, text)
     response = interviewer.get_response_from_gpt(prompt)
     audio = interviewer.get_audio_from_response(response)
     return HttpResponse(audio)
