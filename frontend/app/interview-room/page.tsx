@@ -31,7 +31,7 @@ export default function InterviewRoom() {
     `That sounds like a substantial contribution. Your initiative to implement automated testing demonstrates problem-solving abilities and a focus on efficiency. Can you tell me more about how you prioritized which test cases to automate first? Additionally, how did you ensure the team was aligned with the new automated processes, and what steps did you take to measure the effectiveness of this change?`,
     `Thank you for sharing your experiences and skills. We'll review everything and get back to you soon.`,
   ];
-  const videoTimes = [19000, 19000, 20000, 5000];
+  const videoTimes = [19000, 19000, 20000, 4000];
 
   const numQ = Number(searchParams.get("questions"));
 
@@ -48,7 +48,7 @@ export default function InterviewRoom() {
         } else {
           alert("session ID not found");
         }
-      }, 5000);
+      }, 4000);
     }
   }, [liveChat]);
 
@@ -77,13 +77,13 @@ export default function InterviewRoom() {
 
   useEffect(() => {
     const newMessage = { role: "assistant", content: messages[videoIndex] };
-    if (liveChat.length <= 1) {
+    if (liveChat.length <= 2) {
       setLiveChat((prevLiveChat) =>
         filterDuplicates([...prevLiveChat, newMessage])
       );
       setTimeout(() => {
         setLiveChat((prevLiveChat) => [
-          ...prevLiveChat,
+          { role: "assistant", content: messages[0] },
           { role: "user", content: "" },
         ]);
       }, videoTimes[videoIndex]);
