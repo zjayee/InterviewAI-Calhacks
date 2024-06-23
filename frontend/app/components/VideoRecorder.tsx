@@ -68,7 +68,7 @@ const VideoRecorder = () => {
           ) : (
             <span className="absolute top-[124px] left-[240px]">
               <Image
-                src="/user-profile.png"
+                src="/user.png"
                 alt="user-pfp"
                 width={100}
                 height={100}

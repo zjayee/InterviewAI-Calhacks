@@ -9,9 +9,37 @@ import { IoMicOutline, IoVideocamOutline } from "react-icons/io5";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import AudioRecorder from "../components/AudioRecorder";
+import TimerDisplay from "../components/TimerDisplay";
+import Image from "next/image";
 
 export default function InterviewRoom() {
   const searchParams = useSearchParams();
+  const [responseAudio, setResponseAudio] = useState("");
+  const [responseText, setResponseText] = useState("");
+  const [liveChat, setLiveChat] = useState([{ role: "user", content: "" }]);
+
+  useEffect(() => {
+    if (responseAudio) {
+      const audioElement = new Audio(responseAudio);
+      audioElement.play().catch((error) => {
+        console.error("Failed to play audio:", error.message);
+      });
+
+      audioElement.addEventListener("ended", () => {
+        setLiveChat((prevLiveChat) => [
+          ...prevLiveChat,
+          { role: "user", content: "" },
+        ]);
+      });
+    }
+  }, [responseAudio]);
+
+  useEffect(() => {
+    if (responseText !== "") {
+      const newMessage = { role: "assistant", content: responseText };
+      setLiveChat((prevLiveChat) => [...prevLiveChat, newMessage]);
+    }
+  }, [responseText]);
 
   return (
     <main className="main-container flex flex-row gap-x-[2vw]">
@@ -30,8 +58,8 @@ export default function InterviewRoom() {
           company={searchParams.get("company")}
           numQ={searchParams.get("questions")}
         />
-        <div className="">
-          <AudioRecorder sessionID={searchParams.get("id")} />
+        <div className="mt-[2vh] w-[100%] mb-[2vh] overflow-hidden flex-1 max-h-[70vh]">
+          <LiveChat />
         </div>
         <div className="w-[100%] gap-y-[10px] flex flex-col items-center justify-center">
           <ButtonContainer />
@@ -40,6 +68,90 @@ export default function InterviewRoom() {
       </div>
     </main>
   );
+
+  function LiveChat() {
+    return (
+      <div className="pb-[3vh] flex-1 items-start justify-end h-[100%] w-[100%] flex flex-col gap-y-[35px]">
+        {liveChat.map((item, index) =>
+          item.role == "user" ? (
+            <UserResponse />
+          ) : (
+            <AssistantResponse responseText={item.content} />
+          )
+        )}
+      </div>
+    );
+  }
+
+  function UserResponse() {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const [isDone, setIsDone] = useState(false);
+
+    return (
+      <div className="flex flex-row w-[100%] gap-x-[15px]">
+        <Image
+          className="w-[35px] h-[35px]"
+          src="/user.png"
+          width={35}
+          height={35}
+          alt="assistant"
+        />
+        <div className="w-[100%] flex flex-col gap-y-[10px]">
+          <div className="flex flex-row text-[0.75rem] font-light justify-between">
+            <p className="">Your answer...</p>
+            <p className="mr-[0.5vw]">
+              {hours}:{minutes}
+            </p>
+          </div>
+          <div className="flex items-cente w-[210px] justify-center p-[20px] bg-[#EEF3FA] rounded-[15px]">
+            <AudioRecorder
+              isDone={isDone}
+              setIsDone={setIsDone}
+              setResponseText={setResponseText}
+              setResponseAudio={setResponseAudio}
+              sessionID={searchParams.get("id")}
+            />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function AssistantResponse({
+    responseText,
+  }: {
+    responseText: string | undefined;
+  }) {
+    const now = new Date();
+    const hours = now.getHours().toString().padStart(2, "0");
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    return (
+      <div className="flex flex-row w-[100%] gap-x-[15px]">
+        <Image
+          className="w-[35px] h-[35px]"
+          src="/assistant.png"
+          width={35}
+          height={35}
+          alt="assistant"
+        />
+        <div className="w-[100%] flex flex-col gap-y-[10px]">
+          <div className="flex flex-row text-[0.75rem] font-light justify-between">
+            <p className="">Andrew asked...</p>
+            <p className="mr-[0.5vw]">
+              {hours}:{minutes}
+            </p>
+          </div>
+          <div className="w-[100%] p-[20px] shadow rounded-[15px]">
+            {responseText}
+          </div>
+        </div>
+      </div>
+    );
+  }
 }
 
 function Header({ company, numQ }: { company: any; numQ: any }) {
@@ -61,43 +173,6 @@ function ButtonContainer() {
       <MicButton />
       <EndButton />
       <VidButton />
-    </div>
-  );
-}
-
-function TimerDisplay() {
-  const [seconds, setSeconds] = useState(0);
-  const [minutes, setMinutes] = useState(0);
-  const [hours, setHours] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // Update seconds
-      setSeconds((prevSeconds) => {
-        if (prevSeconds === 59) {
-          setMinutes((prevMinutes) => {
-            if (prevMinutes === 59) {
-              setHours((prevHours) => prevHours + 1);
-              return 0;
-            } else {
-              return prevMinutes + 1;
-            }
-          });
-          return 0;
-        } else {
-          return prevSeconds + 1;
-        }
-      });
-    }, 1000);
-
-    return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, []); // Empty dependency array ensures useEffect runs only once on mount
-
-  return (
-    <div className="text-[0.9rem]">
-      {hours < 10 ? `0${hours}` : hours}:
-      {minutes < 10 ? `0${minutes}` : minutes}:
-      {seconds < 10 ? `0${seconds}` : seconds}
     </div>
   );
 }
