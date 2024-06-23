@@ -2,3 +2,4 @@
 env/*
 env/Lib/site-packages/*
 .env
+calhacks/ssh.pub
