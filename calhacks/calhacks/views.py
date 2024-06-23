@@ -76,32 +76,10 @@ def get_summary(request):
     
     return HttpResponse(response)
 
-@csrf_exempt 
-def my_view(request):
-    if request.method == 'POST':
-        try:
-            print(request.body.decode('utf-8'))
-            json_data = json.loads(request.body.decode('utf-8'))
-            print(json_data)
-            print(json_data["hello"])
-            return HttpResponse(json_data["hello"])
-            # Do something with the JSON data
-        except json.JSONDecodeError as e:
-            # Handle invalid JSON data
-            return HttpResponse("Sad")
+@csrf_exempt
+def get_transcript(request):
+    json_data = json.loads(request.body.decode('utf-8'))
+    session_id = json_data["session_id"]
+    session = get_session(session_id)
 
-# sample endpoint
-# @csrf_exempt 
-# def create_user(request):
-#     try:
-#         database_connector = DatabaseConnector()
-#         database_connector.connect_to_db()
-#         user_test = {
-#             "name": "name",
-#         }
-#         x = database_connector.metadata_db["user"].insert_one(user_test)
-#         # print(x.inserted_id)
-#         return HttpResponse(x.inserted_id)
-#     except Exception as e:
-#         # Handle invalid JSON data
-#         return HttpResponse("Sad")
+    return HttpResponse(json.dumps(session.text_history))
