@@ -6,19 +6,11 @@ import UserCamera from "./UserCamera";
 import Logo from "../components/Logo";
 import { ImPhoneHangUp } from "react-icons/im";
 import { IoMicOutline, IoVideocamOutline } from "react-icons/io5";
-import { usePathname, useSearchParams } from "next/navigation";
-
-type sessionType = {
-  company: string;
-  job_description: string;
-  type: string;
-  num_q: number;
-  resume: string;
-};
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function InterviewRoom() {
   const searchParams = useSearchParams();
-  console.log(searchParams.get("query"));
   return (
     <main className="main-container flex flex-row gap-x-[2vw]">
       <div className="relative w-[829.92px] gap-y-[2vh] flex flex-col">
@@ -36,7 +28,7 @@ export default function InterviewRoom() {
           company={searchParams.get("company")}
           numQ={searchParams.get("questions")}
         />
-        <div className="">live questions</div>
+        <div className=""></div>
         <div className="w-[100%] gap-y-[10px] flex flex-col items-center justify-center">
           <ButtonContainer />
           <TimerDisplay />
@@ -70,7 +62,40 @@ function ButtonContainer() {
 }
 
 function TimerDisplay() {
-  return <div className="text-[0.9rem]">00:12:03</div>;
+  const [seconds, setSeconds] = useState(0);
+  const [minutes, setMinutes] = useState(0);
+  const [hours, setHours] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Update seconds
+      setSeconds((prevSeconds) => {
+        if (prevSeconds === 59) {
+          setMinutes((prevMinutes) => {
+            if (prevMinutes === 59) {
+              setHours((prevHours) => prevHours + 1);
+              return 0;
+            } else {
+              return prevMinutes + 1;
+            }
+          });
+          return 0;
+        } else {
+          return prevSeconds + 1;
+        }
+      });
+    }, 1000);
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, []); // Empty dependency array ensures useEffect runs only once on mount
+
+  return (
+    <div className="text-[0.9rem]">
+      {hours < 10 ? `0${hours}` : hours}:
+      {minutes < 10 ? `0${minutes}` : minutes}:
+      {seconds < 10 ? `0${seconds}` : seconds}
+    </div>
+  );
 }
 
 function EndButton() {
