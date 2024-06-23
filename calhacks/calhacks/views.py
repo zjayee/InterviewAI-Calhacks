@@ -1,6 +1,7 @@
 
 from django.shortcuts import render
 import json
+import base64
 from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
@@ -31,7 +32,7 @@ def start_session(request):
 def interview_loop(request):
     json_data = json.loads(request.body.decode('utf-8'))
     session_id = json_data["session_id"]
-    user_audio = json_data["user_audio"]
+    user_audio = base64.decodebytes(json_data["user_audio"])
     interviewer = Interviewer()
     text = interviewer.get_text_from_audio(user_audio)
     prompt = generate_message_history(text)
