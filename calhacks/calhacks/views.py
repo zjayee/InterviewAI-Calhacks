@@ -34,7 +34,10 @@ def start_interview(request):
     add_assistant_response(session, response)
 
     audio = interviewer.get_audio_from_response(response)
-    audio64 = base64.b64encode(audio).decode('ascii')
+    # Convert iterator of bytes to a single bytes object
+    audio_bytes = b''.join(audio)
+    # Encode the bytes object into a base64 string
+    audio64 = base64.b64encode(audio_bytes).decode('utf-8')
     output = {"audio_output": audio64, "text_output": response}
 
     return HttpResponse(json.dumps(output))
