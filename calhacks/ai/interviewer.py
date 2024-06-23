@@ -6,7 +6,16 @@ from openai import OpenAI
 from hume import HumeBatchClient
 from hume.models.config import FaceConfig, ProsodyConfig, LanguageConfig
 from dotenv import load_dotenv, dotenv_values 
+from fastapi import FastAPI
+from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fabric import Connection
+from dotenv import dotenv_values
+from pydantic import BaseModel
 
+HOST_IP = "100.82.142.94"
+GATEWAY_IP = "146.152.232.8"
+SSH_KEY = "ssh.pub"
 
 class Interviewer:
   def __init__(self):
@@ -89,6 +98,21 @@ class Interviewer:
               }]
 
     return content_prompt, sentiment_prompt
+  
+  def generate_video(self, i):
+    playground = Connection(host=HOST_IP,
+                        gateway=Connection('guest@146.152.232.8'),
+                        connect_kwargs={
+                          "key_filename": [SSH_KEY]
+                        })
+    #playground.run("python3 inference_2.py --checkpoint_path \"checkpoints/wav2lip_gan.pth\" --face \"intel_ceo.mp4\" --audio {audio}")
+    video_name = f"results/result_voice{i}.mp4"
+    io_obj = BytesIO()
+    playground.get(video_name, io_obj)
+    print(io_obj.getvalue())
+    playground.close()
+    return io_obj.getvalue()
+
 
   # def run(self):
   #   input_text = self.get_text_from_audio()
