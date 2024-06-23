@@ -8,9 +8,11 @@ import { ImPhoneHangUp } from "react-icons/im";
 import { IoMicOutline, IoVideocamOutline } from "react-icons/io5";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import AudioRecorder from "../components/AudioRecorder";
 
 export default function InterviewRoom() {
   const searchParams = useSearchParams();
+
   return (
     <main className="main-container flex flex-row gap-x-[2vw]">
       <div className="relative w-[829.92px] gap-y-[2vh] flex flex-col">
@@ -28,7 +30,9 @@ export default function InterviewRoom() {
           company={searchParams.get("company")}
           numQ={searchParams.get("questions")}
         />
-        <div className=""></div>
+        <div className="">
+          <AudioRecorder />
+        </div>
         <div className="w-[100%] gap-y-[10px] flex flex-col items-center justify-center">
           <ButtonContainer />
           <TimerDisplay />

@@ -21,7 +21,7 @@ const VideoRecorder = () => {
     if ("MediaRecorder" in window) {
       try {
         const streamData = await navigator.mediaDevices.getUserMedia({
-          audio: true,
+          audio: false,
           video: true,
         });
         setPermission(true);

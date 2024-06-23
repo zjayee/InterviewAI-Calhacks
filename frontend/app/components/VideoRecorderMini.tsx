@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import { LuMic } from "react-icons/lu";
 
 const VideoRecorderMini = () => {
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -11,7 +10,7 @@ const VideoRecorderMini = () => {
       if ("MediaRecorder" in window) {
         try {
           const streamData = await navigator.mediaDevices.getUserMedia({
-            audio: true,
+            audio: false, // Disable audio capture
             video: true,
           });
           setStream(streamData);
@@ -53,6 +52,7 @@ const VideoRecorderMini = () => {
             width="100%"
             height="auto"
             className="z-0 top-[-50px]"
+            muted // Add this attribute to mute the video element
           />
         </div>
       </main>
