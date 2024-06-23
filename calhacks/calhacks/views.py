@@ -32,9 +32,8 @@ def start_session(request):
 def interview_loop(request):
     json_data = json.loads(request.body.decode('utf-8'))
     session_id = json_data["session_id"]
-    print("sessionid: " +session_id)
     session = get_session(session_id)
-    print(session)
+
     user_audio = base64.b64decode(json_data["user_audio"])
     interviewer = Interviewer()
 
