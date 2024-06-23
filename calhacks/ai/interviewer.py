@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fabric import Connection
 from dotenv import dotenv_values
 from pydantic import BaseModel
+from io import BytesIO
 
 HOST_IP = "100.82.142.94"
 GATEWAY_IP = "146.152.232.8"
