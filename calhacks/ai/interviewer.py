@@ -47,7 +47,6 @@ class Interviewer:
         voice="echo",
         input=response
     )
-    print(response.iter_bytes())
     return response.iter_bytes()
   
   def speech_prosody_emotion_analysis(self, filebytes, result_path:str):
