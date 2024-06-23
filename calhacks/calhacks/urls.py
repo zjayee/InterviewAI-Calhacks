@@ -26,5 +26,6 @@ urlpatterns = [
     path('get_summary', view=views.get_summary, name='get_summary'),
     path('start_interview', view=views.start_interview, name='start_interview'),
     path('get_transcript', view=views.get_transcript, name='get_transcript'),
-    path('get_question_summary', view=views.get_question_summary, name='get_question_summary')
+    path('get_question_summary', view=views.get_question_summary, name='get_question_summary'),
+    path('end_interview', view=views.end_interview, name='end_interview')
 ]

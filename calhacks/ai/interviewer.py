@@ -67,7 +67,7 @@ class Interviewer:
     # print(job.get_predictions()[1]["results"]["predictions"][0]["models"])
     # job.download_predictions(result_path + ".json")
     # print("emotion_analysis done")
-    return job.get_predictions()[1]["results"]["predictions"][0]["models"]
+    return job.get_predictions()[1]["results"]["predictions"][0]["models"]["language"]["grouped_predictions"][0]["predictions"][0]["emotions"]
 
   def combine_audio_response_analysis(self, question:str, response_text:str, analysis_result:str) -> tuple:
     """Combine the question, user's response, and emotion analysis in this QA session and generate two prompt for GPT

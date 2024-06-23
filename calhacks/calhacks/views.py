@@ -7,8 +7,8 @@ from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 from django.http import HttpResponse
 
-from calhacks.session import create_session, get_session, add_user_input, add_assistant_response
-from calhacks.prompt import generate_start_message, generate_message_history, generate_summary_prompt
+from calhacks.session import create_session, get_session, add_user_input, add_assistant_response, add_emotion_entry
+from calhacks.prompt import generate_start_message, generate_message_history, generate_summary_prompt, generate_end_prompt
 from calhacks.db import DatabaseConnector
 from ai.interviewer import Interviewer
 
@@ -52,8 +52,10 @@ def interview_loop(request):
     interviewer = Interviewer()
 
     text = interviewer.get_text_from_audio(user_audio)
-    add_user_input(session, text)
+    emotional_analysis = interviewer.speech_prosody_emotion_analysis(user_audio)
 
+    add_emotion_entry(session, emotional_analysis)
+    add_user_input(session, text)
     prompt = generate_message_history(session, text)
     response = interviewer.get_response_from_gpt(prompt)
     add_assistant_response(session, response)
@@ -65,6 +67,26 @@ def interview_loop(request):
     # Encode the bytes object into a base64 string
     audio64 = base64.b64encode(audio_bytes).decode('utf-8')
     output = {"audio_output": audio64, "text_output": response}
+
+    return HttpResponse(json.dumps(output))
+
+@csrf_exempt
+def end_interview(request):
+    json_data = json.loads(request.body.decode('utf-8'))
+    session_id = json_data["session_id"]
+    session = get_session(session_id)
+    interviewer = Interviewer()
+    user_audio = base64.b64decode(json_data["user_audio"])
+    text = interviewer.get_text_from_audio(user_audio)
+
+    emotional_analysis = interviewer.speech_prosody_emotion_analysis(user_audio)
+    add_user_input(session, text)
+    add_emotion_entry(session, emotional_analysis)
+
+    prompt = generate_end_prompt(session)
+    response = interviewer.get_response_from_gpt(prompt)
+    add_assistant_response(session, response)
+    output = {"text_output": response}
 
     return HttpResponse(json.dumps(output))
 
