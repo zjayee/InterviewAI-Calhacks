@@ -77,7 +77,7 @@ export default function InterviewRoom() {
 
   useEffect(() => {
     const newMessage = { role: "assistant", content: messages[videoIndex] };
-    if (liveChat.length <= 2) {
+    if (liveChat.length <= 1) {
       setLiveChat((prevLiveChat) =>
         filterDuplicates([...prevLiveChat, newMessage])
       );
