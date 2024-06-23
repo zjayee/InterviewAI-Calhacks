@@ -26,4 +26,5 @@ urlpatterns = [
     path('interview_loop', view=views.interview_loop, name='interview_loop'),
     path('get_summary', view=views.get_summary, name='get_summary'),
     path('start_interview', view=views.start_interview, name='start_interview'),
+    path('get_transcript', view=views.get_transcript, name='get_transcript'),
 ]
