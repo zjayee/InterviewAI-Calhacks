@@ -11,6 +11,7 @@ class Session:
     num_q: int
     resume: str
     text_history: list
+    emotion_history: list
 
 # returns session id
 def create_session(company: str, job_description: str, type: str, num_q: int, resume: str) -> str:
@@ -49,4 +50,10 @@ def add_assistant_response(session: Session, assistant_response: str) -> None:
     database_connector = DatabaseConnector()
     database_connector.connect_to_db()
     session.text_history.append({"role": "assistant", "content": assistant_response})
+    database_connector.db["session"].update_one({"id": session.id}, {"$set": asdict(session)})
+
+def add_emotion_entry(session: Session, emotion_entry: dict) -> None:
+    database_connector = DatabaseConnector()
+    database_connector.connect_to_db()
+    session.emotion_history.append(emotion_entry)
     database_connector.db["session"].update_one({"id": session.id}, {"$set": asdict(session)})

@@ -4,14 +4,18 @@ from groq import Groq
 from openai import OpenAI
 from hume import HumeBatchClient
 from hume.models.config import FaceConfig, ProsodyConfig
+from dotenv import load_dotenv, dotenv_values 
 
 
 class Interviewer:
   def __init__(self):
     # Initialize any necessary variables or resources here
-    self.open_ai_client = OpenAI()
-    self.gorq_client = Groq()
+    load_dotenv()
+    print(os.getenv("OPENAI_API_KEY"))
+    self.open_ai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    self.gorq_client = Groq(api_key=os.getenv("GROQ_API_KEY"))
     self.hume_client = HumeBatchClient(os.getenv("HUME_API_KEY"))
+
   
   def get_text_from_audio(self, audio) -> str:
     input_text = self.gorq_client.audio.transcriptions.create(
@@ -28,7 +32,7 @@ class Interviewer:
 
   def get_response_from_gpt(self, prompt) -> str:
     response = self.open_ai_client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o",
         messages= prompt,
         n = 1,
         seed=0
@@ -73,5 +77,5 @@ if __name__ == "__main__":
   st = time.time()
   interviewer = Interviewer()
   # interviewer.run()
-  # interviewer.speech_prosody_emotion_analysis(audio, "result_test")
+  interviewer.speech_prosody_emotion_analysis(audio, "result_test")
   et = time.time()

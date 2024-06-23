@@ -8,6 +8,9 @@ def get_interview_context(session: Session) -> str:
         Candidate Resume: {session.resume}\n"""
     return interview_context
 
+def get_emotion_analysis(session: Session) -> str:
+    return str(session.emotion_history)
+
 def generate_start_message(session: Session) -> list:
     start_interview_prompt = get_interview_context(session) + "Please start the interview by introducing yourself and ask the candidate to introduce themselves."
 
@@ -22,3 +25,9 @@ def generate_message_history(session: Session, user_input: str) -> list:
     messages += session.text_history
     messages.append({"role": "user", "content": user_input})
     return messages
+
+def generate_summary_prompt(session: Session) -> str:
+    interview_feedback_prompt = get_interview_context(session) + "Please provide feedback on the candidate's performance in the interview. Use the interview history and the following emotional analysis to guide your feedback." + get_emotion_analysis(session)
+    for message in session.text_history:
+        summary += f"{message['role']}: {message['content']}\n"
+    return summary

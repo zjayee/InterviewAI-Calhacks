@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 
 from calhacks.session import create_session, get_session, add_user_input, add_assistant_response
-from calhacks.prompt import generate_start_message, generate_message_history
+from calhacks.prompt import generate_start_message, generate_message_history, generate_summary_prompt
 from calhacks.db import DatabaseConnector
 from ai.interviewer import Interviewer
 
@@ -21,6 +21,12 @@ def test_db(request):
     database_connector.connect_to_db()
     result = database_connector.db["convo"].insert_one({"hello": "world"})
     return HttpResponse(str(result.inserted_id))
+
+@csrf_exempt
+def start_session(request):
+    json_data = json.loads(request.body.decode('utf-8'))
+    session_id = create_session(json_data["company"], json_data["job_description"], json_data["type"], int(json_data["num_q"]), json_data["resume"])
+    return HttpResponse(session_id)
 
 @csrf_exempt
 def start_session(request):
@@ -47,6 +53,18 @@ def interview_loop(request):
     audio = interviewer.get_audio_from_response(response)
 
     return HttpResponse(audio)
+
+@csrf_exempt
+def get_summary(request):
+    json_data = json.loads(request.body.decode('utf-8'))
+    session_id = json_data["session_id"]
+    session = get_session(session_id)
+
+    interviewer = Interviewer()
+    summary_prompt = generate_summary_prompt(session)
+    response = interviewer.get_response_from_gpt(summary_prompt)
+    
+    return HttpResponse(response)
 
 @csrf_exempt 
 def my_view(request):
