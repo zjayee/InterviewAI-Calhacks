@@ -14,10 +14,6 @@ from dotenv import dotenv_values
 from pydantic import BaseModel
 from io import BytesIO
 
-HOST_IP = "100.82.142.94"
-GATEWAY_IP = "146.152.232.8"
-SSH_KEY = "ssh.pub"
-
 class Interviewer:
   def __init__(self):
     # Initialize any necessary variables or resources here
@@ -100,7 +96,7 @@ class Interviewer:
 
     return content_prompt, sentiment_prompt
   
-  def generate_video(self, i):
+  def generate_video(self):
     playground = Connection(host=HOST_IP,
                         gateway=Connection('guest@146.152.232.8'),
                         connect_kwargs={
@@ -114,7 +110,14 @@ class Interviewer:
     playground.close()
     return io_obj.getvalue()
 
-
+  def generate_videos(self, audio):
+    HOST_IP = os.getenv("HOST_IP")
+    SSH_KEY = os.getenv("SSH_KEY")
+    GATEWAY_IP = os.getenv("GATEWAY_IP")
+    video_name = f"results/result_voice.mp4"
+    io_obj = BytesIO()
+    io_obj = ""
+    return io_obj
   # def run(self):
   #   input_text = self.get_text_from_audio()
   #   response = self.get_response_from_gpt(input_text)

@@ -38,7 +38,8 @@ def start_interview(request):
     audio_bytes = b''.join(audio)
     # Encode the bytes object into a base64 string
     audio64 = base64.b64encode(audio_bytes).decode('utf-8')
-    output = {"audio_output": audio64, "text_output": response}
+    video = interviewer.generate_videos(audio)
+    output = {"audio_output": audio64, "text_output": response, "video_output": video}
 
     return HttpResponse(json.dumps(output))
 
@@ -66,7 +67,8 @@ def interview_loop(request):
 
     # Encode the bytes object into a base64 string
     audio64 = base64.b64encode(audio_bytes).decode('utf-8')
-    output = {"audio_output": audio64, "text_output": response}
+    video = interviewer.generate_videos(audio)
+    output = {"audio_output": audio64, "text_output": response, "video_output": video}
 
     return HttpResponse(json.dumps(output))
 
