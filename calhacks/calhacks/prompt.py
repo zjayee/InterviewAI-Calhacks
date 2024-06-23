@@ -30,6 +30,13 @@ def generate_start_message(session: Session) -> list:
     ]
     return messages
 
+def generate_end_prompt(session: Session) -> str:
+    end_interview_prompt = "You are an interviewer. Please say something to wrap up the interview. Keep your response under 15 words."
+    messages=[
+        {"role": "system", "content": end_interview_prompt},
+    ]
+    return messages
+
 def generate_message_history(session: Session, user_input: str) -> list:
     continue_interview_prompt = get_interview_context(session) + "Please continue the interview by responding to the candidate's response and asking the candidate a question."
     messages = [{"role": "system", "content": continue_interview_prompt}]
