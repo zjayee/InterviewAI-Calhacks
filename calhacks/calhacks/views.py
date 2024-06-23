@@ -8,7 +8,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 
 from calhacks.session import create_session, get_session, add_user_input, add_assistant_response
-from calhacks.prompt import generate_start_message, generate_message_history
+from calhacks.prompt import generate_start_message, generate_message_history, generate_summary_prompt
 from calhacks.db import DatabaseConnector
 from ai.interviewer import Interviewer
 
@@ -27,6 +27,22 @@ def start_session(request):
     json_data = json.loads(request.body.decode('utf-8'))
     session_id = create_session(json_data["company"], json_data["job_description"], json_data["type"], int(json_data["num_q"]), json_data["resume"])
     return HttpResponse(session_id)
+
+@csrf_exempt
+def start_interview(request):
+    json_data = json.loads(request.body.decode('utf-8'))
+    session_id = json_data["session_id"]
+    session = get_session(session_id)
+    
+    interviewer = Interviewer()
+
+    prompt = generate_start_message(session)
+    response = interviewer.get_response_from_gpt(prompt)
+    add_assistant_response(session, response)
+
+    audio = interviewer.get_audio_from_response(response)
+
+    return HttpResponse(audio)
 
 @csrf_exempt
 def interview_loop(request):
@@ -48,32 +64,22 @@ def interview_loop(request):
 
     return HttpResponse(audio)
 
-@csrf_exempt 
-def my_view(request):
-    if request.method == 'POST':
-        try:
-            print(request.body.decode('utf-8'))
-            json_data = json.loads(request.body.decode('utf-8'))
-            print(json_data)
-            print(json_data["hello"])
-            return HttpResponse(json_data["hello"])
-            # Do something with the JSON data
-        except json.JSONDecodeError as e:
-            # Handle invalid JSON data
-            return HttpResponse("Sad")
+@csrf_exempt
+def get_summary(request):
+    json_data = json.loads(request.body.decode('utf-8'))
+    session_id = json_data["session_id"]
+    session = get_session(session_id)
 
-# sample endpoint
-# @csrf_exempt 
-# def create_user(request):
-#     try:
-#         database_connector = DatabaseConnector()
-#         database_connector.connect_to_db()
-#         user_test = {
-#             "name": "name",
-#         }
-#         x = database_connector.metadata_db["user"].insert_one(user_test)
-#         # print(x.inserted_id)
-#         return HttpResponse(x.inserted_id)
-#     except Exception as e:
-#         # Handle invalid JSON data
-#         return HttpResponse("Sad")
+    interviewer = Interviewer()
+    summary_prompt = generate_summary_prompt(session)
+    response = interviewer.get_response_from_gpt(summary_prompt)
+    
+    return HttpResponse(response)
+
+@csrf_exempt
+def get_transcript(request):
+    json_data = json.loads(request.body.decode('utf-8'))
+    session_id = json_data["session_id"]
+    session = get_session(session_id)
+
+    return HttpResponse(json.dumps(session.text_history))
