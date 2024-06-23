@@ -36,7 +36,7 @@ export default function Home() {
 
 function Camera() {
   return (
-    <div className="overflow-hidden rounded-[30px] bg-[#CDD8E7] h-[48vh] aspect-[765/501]">
+    <div className="overflow-hidden rounded-[30px] bg-[#CDD8E7] h-[380px] aspect-[765/501]">
       <VideoRecorder />
     </div>
   );

@@ -62,10 +62,6 @@ body {
   align-items: center;
   gap: 10px;
 }
-.audio-controls,
-.video-controls {
-  margin-bottom: 20px;
-}
 .audio-player,
 .video-player {
   display: flex;

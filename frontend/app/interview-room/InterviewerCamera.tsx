@@ -7,8 +7,8 @@ export default function InterviewerCamera() {
         <defs>
           <clipPath className="scale-[0.78]" id="interviewer-clip">
             <path
-              fill-rule="evenodd"
-              clip-rule="evenodd"
+              fillRule="evenodd"
+              clipRule="evenodd"
               d="M194.597 0C178.028 0 164.597 13.4315 164.597 30V40.2942C164.597 62.3856 146.688 80.2942 124.597 80.2942H30C13.4315 80.2942 0 93.7257 0 110.294V629C0 645.569 13.4315 659 30 659H194.597H466.729H1034C1050.57 659 1064 645.569 1064 629V30C1064 13.4315 1050.57 0 1034 0H194.597Z"
               fill="#C4C4C4"
             />

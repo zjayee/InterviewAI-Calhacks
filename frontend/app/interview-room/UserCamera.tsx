@@ -1,9 +1,10 @@
 import { BsSoundwave } from "react-icons/bs";
 import { FaUser } from "react-icons/fa";
+import VideoRecorderMini from "../components/VideoRecorderMini";
 
 export default function UserCamera() {
   return (
-    <div className="relative">
+    <div className="relative h-[177px] overflow-hidden">
       <div className="w-[284.7px]">
         <svg className="absolute top-[-999px] left-[-999px] w-0 h-0">
           <defs>
@@ -21,7 +22,7 @@ export default function UserCamera() {
           className="clipped-content"
           style={{ clipPath: "url(#user-clip)" }}
         >
-          <div className="w-[100%] aspect-[365/224] bg-red-300"></div>
+          <VideoRecorderMini />
         </div>
       </div>
       <div className="flex justify-center items-center top-0 right-0 absolute w-[37px] aspect-square bg-[#6E87ED] rounded-[50%]">

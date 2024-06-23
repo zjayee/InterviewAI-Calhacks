@@ -6,8 +6,19 @@ import UserCamera from "./UserCamera";
 import Logo from "../components/Logo";
 import { ImPhoneHangUp } from "react-icons/im";
 import { IoMicOutline, IoVideocamOutline } from "react-icons/io5";
+import { usePathname, useSearchParams } from "next/navigation";
+
+type sessionType = {
+  company: string;
+  job_description: string;
+  type: string;
+  num_q: number;
+  resume: string;
+};
 
 export default function InterviewRoom() {
+  const searchParams = useSearchParams();
+  console.log(searchParams.get("query"));
   return (
     <main className="main-container flex flex-row gap-x-[2vw]">
       <div className="relative w-[829.92px] gap-y-[2vh] flex flex-col">
@@ -21,7 +32,10 @@ export default function InterviewRoom() {
         </div>
       </div>
       <div className="flex-1 flex flex-col items-start justify-between">
-        <Header />
+        <Header
+          company={searchParams.get("company")}
+          numQ={searchParams.get("questions")}
+        />
         <div className="">live questions</div>
         <div className="w-[100%] gap-y-[10px] flex flex-col items-center justify-center">
           <ButtonContainer />
@@ -32,12 +46,15 @@ export default function InterviewRoom() {
   );
 }
 
-function Header() {
+function Header({ company, numQ }: { company: any; numQ: any }) {
+  const capitalizedCompany = company.charAt(0).toUpperCase() + company.slice(1);
   return (
     <div className="flex flex-row items-center gap-x-[12px]">
-      <h1 className="font-semibold text-[1.5rem]">Google Interview</h1>
+      <h1 className="font-semibold text-[1.5rem]">
+        {capitalizedCompany} Interview
+      </h1>
       <span className="w-[8px] h-[8px] bg-[#6E87ED] rounded-[50%]"></span>
-      <span className="text-[0.9rem]">30 min</span>
+      <span className="text-[0.9rem]">{numQ} question&#40;s&#41;</span>
     </div>
   );
 }

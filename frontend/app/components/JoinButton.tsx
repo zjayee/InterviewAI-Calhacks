@@ -1,30 +1,68 @@
 import React from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export default function JoinButton({ formData }: { formData: any }) {
+type sessionType = {
+  company: string;
+  job_description: string;
+  type: string;
+  num_q: number;
+  resume: string;
+};
+
+export default function JoinButton({ formData }: { formData: sessionType }) {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const handleJoinNow = async () => {
+    const hasEmptyField = Object.values(formData).some((value) => value === "");
+
+    if (hasEmptyField) {
+      window.alert("Please fill in all fields before submitting.");
+      return;
+    }
+
     const requestBody = JSON.stringify(formData);
     console.log("Sending request:", requestBody);
 
-    const response = await fetch("http://127.0.0.1:8000/create_session", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: requestBody,
-      redirect: "follow",
-    });
+    let response;
 
-    if (response.ok) {
-      const data = await response.json();
-      console.log("Session created successfully:", data);
-      router.push("/interview-room");
-    } else {
-      const errorMessage = await response.text();
-      console.log(`Failed to create session: ${errorMessage}`);
+    try {
+      response = await fetch("http://127.0.0.1:8000/create_session", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: requestBody,
+        redirect: "follow",
+      });
+    } catch (err) {
+      console.error("Network error:", err);
     }
+
+    if (response) {
+      if (response.ok) {
+        try {
+          const data = await response.json();
+          console.log("Session created successfully:", data);
+        } catch (jsonError) {
+          console.error("Error parsing JSON:", jsonError);
+        }
+      } else {
+        try {
+          const errorMessage = await response.text();
+          console.log(`Failed to create session: ${errorMessage}`);
+        } catch (textError) {
+          console.error("Error reading response text:", textError);
+        }
+      }
+    } else {
+      console.log("No response received.");
+    }
+    const params = new URLSearchParams(searchParams);
+    params.set("company", formData.company);
+    params.set("questions", formData.num_q.toString());
+
+    router.push("/interview-room" + "?" + params.toString());
   };
 
   return (
