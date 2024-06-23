@@ -3,6 +3,7 @@ import time
 import json
 from groq import Groq
 from openai import OpenAI
+from io import BytesIO
 from hume import HumeBatchClient
 from hume.models.config import FaceConfig, ProsodyConfig, LanguageConfig
 from dotenv import load_dotenv, dotenv_values 
@@ -101,18 +102,20 @@ class Interviewer:
 
     return content_prompt, sentiment_prompt
   
-  def generate_video(self, audio):
+  # Take in the index of the video and return corresponding video bytes
+  def generate_video(self, i):
     playground = Connection(host=HOST_IP,
                         gateway=Connection('guest@146.152.232.8'),
                         connect_kwargs={
                           "key_filename": [SSH_KEY]
                         })
-    playground.run("python3 inference_2.py --checkpoint_path \"checkpoints/wav2lip_gan.pth\" --face \"intel_ceo.mp4\" --audio {audio}")
-    playground.get("result/result.mp4")
-
+    #playground.run("python3 inference_2.py --checkpoint_path \"checkpoints/wav2lip_gan.pth\" --face \"intel_ceo.mp4\" --audio {audio}")
+    video_name = f"results/result_voice{i}.mp4"
+    io_obj = BytesIO()
+    playground.get(video_name, io_obj)
+    print(io_obj.getvalue())
     playground.close()
-
-    return FileResponse("result", media_type="video/mp4")
+    return io_obj.getvalue()
 
   # def run(self):
   #   input_text = self.get_text_from_audio()
@@ -125,15 +128,16 @@ if __name__ == "__main__":
   audio = open("sample_audio.m4a", "rb").read()
   st = time.time()
   interviewer = Interviewer()
-  # interviewer.run()
-  analysis_result = interviewer.speech_prosody_emotion_analysis(audio)
-  question = "What's your favorite project?"
-  response = interviewer.get_text_from_audio(audio)
-  combined_prompt = interviewer.combine_audio_response_analysis(question, response, analysis_result)
-  # print(combined_prompt)
-  content_feedback = interviewer.get_response_from_gpt(combined_prompt[0])
-  print("\n\n\n")
-  emotion_feedback = interviewer.get_response_from_gpt(combined_prompt[1])
+  # # interviewer.run()
+  # analysis_result = interviewer.speech_prosody_emotion_analysis(audio)
+  # question = "What's your favorite project?"
+  # response = interviewer.get_text_from_audio(audio)
+  # combined_prompt = interviewer.combine_audio_response_analysis(question, response, analysis_result)
+  # # print(combined_prompt)
+  # content_feedback = interviewer.get_response_from_gpt(combined_prompt[0])
+  # print("\n\n\n")
+  # emotion_feedback = interviewer.get_response_from_gpt(combined_prompt[1])
+  interviewer.generate_video(1)
   
   
   et = time.time()
