@@ -26,16 +26,9 @@ export default function InterviewRoom() {
   const [videoIndex, setVideoIndex] = useState(0);
 
   const messages = [
-    `Hello! My name is Andrew, and I'll be conducting your resume screen interview today. I'm excited to
-learn more about your background and experiences to see how they align with the Software Developer Internship role at
-Google. Let's start with a brief introduction. Could you please introduce yourself and provide an overview of your
-educational background and relevant experiences?`,
-    `Thank you for sharing your experience, Wimmer. It sounds like you have a solid background in both web and mobile application development, along with experience in collaborating with various teams.
-
-Could you tell me more about a specific challenge you faced during your time at OpenAI or Intel and how you addressed it? What was the impact of your solution on the project or the team?`,
-    `That sounds like a substantial contribution. Your initiative to implement automated testing demonstrates problem-solving abilities and a focus on efficiency.
-
-Can you tell me more about how you prioritized which test cases to automate first? Additionally, how did you ensure the team was aligned with the new automated processes, and what steps did you take to measure the effectiveness of this change?`,
+    `Hello! My name is Andrew, and I'll be conducting your resume screen interview today. I'm excited to learn more about your background and experiences to see how they align with the Software Developer Internship role at Google. Let's start with a brief introduction. Could you please introduce yourself and provide an overview of your educational background and relevant experiences?`,
+    `Thank you for sharing your experience, Wimmer. It sounds like you have a solid background in both web and mobile application development, along with experience in collaborating with various teams. Could you tell me more about a specific challenge you faced during your time at OpenAI or Intel and how you addressed it? What was the impact of your solution on the project or the team?`,
+    `That sounds like a substantial contribution. Your initiative to implement automated testing demonstrates problem-solving abilities and a focus on efficiency. Can you tell me more about how you prioritized which test cases to automate first? Additionally, how did you ensure the team was aligned with the new automated processes, and what steps did you take to measure the effectiveness of this change?`,
     `Thank you for sharing your experiences and skills. We'll review everything and get back to you soon.`,
   ];
   const videoTimes = [19000, 19000, 20000, 5000];
@@ -73,20 +66,36 @@ Can you tell me more about how you prioritized which test cases to automate firs
     }
   }, []);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setLiveChat((prevLiveChat) => [
-        ...prevLiveChat,
-        { role: "user", content: "" },
-      ]);
-    }, videoTimes[videoIndex]);
-
-    console.log(videoTimes[videoIndex]);
-  }, [videoIndex]);
+  function filterDuplicates(chatArray: ChatMessage[]) {
+    const seen = new Set();
+    return chatArray.filter((item) => {
+      const duplicate = seen.has(`${item.role}-${item.content}`);
+      seen.add(`${item.role}-${item.content}`);
+      return !duplicate;
+    });
+  }
 
   useEffect(() => {
     const newMessage = { role: "assistant", content: messages[videoIndex] };
-    setLiveChat((prevLiveChat) => [...prevLiveChat, newMessage]);
+    if (liveChat.length <= 1) {
+      setLiveChat((prevLiveChat) =>
+        filterDuplicates([...prevLiveChat, newMessage])
+      );
+      setTimeout(() => {
+        setLiveChat((prevLiveChat) => [
+          ...prevLiveChat,
+          { role: "user", content: "" },
+        ]);
+      }, videoTimes[videoIndex]);
+    } else {
+      setLiveChat((prevLiveChat) => [...prevLiveChat, newMessage]);
+      setTimeout(() => {
+        setLiveChat((prevLiveChat) => [
+          ...prevLiveChat,
+          { role: "user", content: "" },
+        ]);
+      }, videoTimes[videoIndex]);
+    }
   }, [videoIndex]);
 
   return (
