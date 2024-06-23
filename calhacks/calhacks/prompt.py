@@ -9,7 +9,7 @@ def get_interview_context(session: Session) -> str:
     return interview_context
 
 def generate_start_message(session: Session) -> list:
-    start_interview_prompt = get_interview_context(session) + "Please start the interview by introducing yourself and ask the candidate to introduce themselves."
+    start_interview_prompt = get_interview_context(session) + "Please start the interview by introducing yourself and ask the candidate to introduce themselves. Only return your response and nothing else."
 
     messages=[
         {"role": "system", "content": start_interview_prompt},

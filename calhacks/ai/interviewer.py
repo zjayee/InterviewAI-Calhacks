@@ -25,7 +25,7 @@ class Interviewer:
 
   def get_response_from_gpt(self, prompt) -> str:
     response = self.open_ai_client.chat.completions.create(
-        model="gpt-3.5-turbo",
+        model="gpt-4o",
         messages= prompt,
         n = 1,
         seed=0

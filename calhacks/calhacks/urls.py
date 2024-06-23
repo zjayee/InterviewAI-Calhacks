@@ -24,4 +24,5 @@ urlpatterns = [
     path('db_test', view=views.test_db, name='test_db'),
     path('create_session', view=views.start_session, name='start_session'),
     path('interview_loop', view=views.interview_loop, name='interview_loop'),
+    path('start_interview', view=views.start_interview, name='start_interview'),
 ]
