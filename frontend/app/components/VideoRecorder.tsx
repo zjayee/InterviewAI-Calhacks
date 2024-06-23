@@ -78,7 +78,7 @@ const VideoRecorder = () => {
           )}
           {!permission ? (
             <button
-              className="glass-container-black w-[60px] h-[60px] flex justify-center items-center border border-white border-2 rounded-[50%] text-white absolute z-10 right-[219px] bottom-[-335px]"
+              className="glass-container-black w-[60px] h-[60px] flex justify-center items-center border border-white border-2 rounded-[50%] text-white absolute z-10 right-[219px] bottom-[-355px]"
               onClick={getCameraPermission}
               type="button"
             >
@@ -86,7 +86,7 @@ const VideoRecorder = () => {
             </button>
           ) : (
             <button
-              className="glass-container-black w-[60px] h-[60px] flex justify-center items-center border border-white border-2 rounded-[50%] text-white absolute z-10 right-[219px] bottom-[-335px]"
+              className="glass-container-black w-[60px] h-[60px] flex justify-center items-center border border-white border-2 rounded-[50%] text-white absolute z-10 right-[219px] bottom-[-355px]"
               onClick={stopCamera}
               type="button"
             >
@@ -94,7 +94,7 @@ const VideoRecorder = () => {
             </button>
           )}
           <button
-            className="glass-container-black w-[60px] h-[60px] flex justify-center items-center border border-white border-2 rounded-[50%] text-white absolute z-10 left-[219px] bottom-[-335px]"
+            className="glass-container-black w-[60px] h-[60px] flex justify-center items-center border border-white border-2 rounded-[50%] text-white absolute z-10 left-[219px] bottom-[-355px]"
             type="button"
           >
             <LuMic size={25} />

@@ -23,6 +23,22 @@ export default function InterviewRoom() {
   const [responseAudio, setResponseAudio] = useState("");
   const [responseText, setResponseText] = useState("");
   const [liveChat, setLiveChat] = useState<ChatMessage[]>([]);
+  const [videoIndex, setVideoIndex] = useState(0);
+
+  const messages = [
+    `Hello! My name is Andrew, and I'll be conducting your resume screen interview today. I'm excited to
+learn more about your background and experiences to see how they align with the Software Developer Internship role at
+Google. Let's start with a brief introduction. Could you please introduce yourself and provide an overview of your
+educational background and relevant experiences?`,
+    `Thank you for sharing your experience, Wimmer. It sounds like you have a solid background in both web and mobile application development, along with experience in collaborating with various teams.
+
+Could you tell me more about a specific challenge you faced during your time at OpenAI or Intel and how you addressed it? What was the impact of your solution on the project or the team?`,
+    `That sounds like a substantial contribution. Your initiative to implement automated testing demonstrates problem-solving abilities and a focus on efficiency.
+
+Can you tell me more about how you prioritized which test cases to automate first? Additionally, how did you ensure the team was aligned with the new automated processes, and what steps did you take to measure the effectiveness of this change?`,
+    `Thank you for sharing your experiences and skills. We'll review everything and get back to you soon.`,
+  ];
+  const videoTimes = [19000, 19000, 20000, 5000];
 
   const numQ = Number(searchParams.get("questions"));
 
@@ -30,24 +46,25 @@ export default function InterviewRoom() {
 
   useEffect(() => {
     if (liveChat.length === numQ * 2 + 1) {
-      if (sessionID) {
-        const params = new URLSearchParams(searchParams);
-        params.set("id", sessionID);
+      setTimeout(() => {
+        if (sessionID) {
+          const params = new URLSearchParams(searchParams);
+          params.set("id", sessionID);
 
-        router.push("/results" + "?" + params.toString());
-      } else {
-        alert("session ID not found");
-      }
+          router.push("/results" + "?" + params.toString());
+        } else {
+          alert("session ID not found");
+        }
+      }, 5000);
     }
   }, [liveChat]);
 
   useEffect(() => {
-    // Fetch introText and introAudio from sessionStorage
     const initialText = sessionStorage.getItem("introText");
     const initialAudio = sessionStorage.getItem("introAudio");
 
     if (initialAudio && initialText) {
-      setLiveChat([{ role: "assistant", content: initialText }]);
+      //  setLiveChat([{ role: "assistant", content: initialText }]);
       setResponseAudio(`data:audio/wav;base64,${initialAudio}`);
     } else {
       alert("Initial data not found");
@@ -57,27 +74,20 @@ export default function InterviewRoom() {
   }, []);
 
   useEffect(() => {
-    if (responseAudio) {
-      const audioElement = new Audio(responseAudio);
-      audioElement.play().catch((error) => {
-        console.error("Failed to play audio:", error.message);
-      });
+    setTimeout(() => {
+      setLiveChat((prevLiveChat) => [
+        ...prevLiveChat,
+        { role: "user", content: "" },
+      ]);
+    }, videoTimes[videoIndex]);
 
-      audioElement.addEventListener("ended", () => {
-        setLiveChat((prevLiveChat) => [
-          ...prevLiveChat,
-          { role: "user", content: "" },
-        ]);
-      });
-    }
-  }, [responseAudio]);
+    console.log(videoTimes[videoIndex]);
+  }, [videoIndex]);
 
   useEffect(() => {
-    if (responseText !== "") {
-      const newMessage = { role: "assistant", content: responseText };
-      setLiveChat((prevLiveChat) => [...prevLiveChat, newMessage]);
-    }
-  }, [responseText]);
+    const newMessage = { role: "assistant", content: messages[videoIndex] };
+    setLiveChat((prevLiveChat) => [...prevLiveChat, newMessage]);
+  }, [videoIndex]);
 
   return (
     <main className="main-container flex flex-row gap-x-[2vw]">
@@ -85,7 +95,7 @@ export default function InterviewRoom() {
         <div className="absolute">
           <Logo />
         </div>
-        <InterviewerCamera />
+        <InterviewerCamera videoIndex={videoIndex} />
         <div className="gap-x-[2vh] flex flex-row justify-between">
           <UserCamera />
           <EmotionStatus />
@@ -149,6 +159,8 @@ export default function InterviewRoom() {
               setResponseAudio={setResponseAudio}
               sessionID={searchParams.get("id")}
               numberQuestions={searchParams.get("questions")}
+              videoIndex={videoIndex}
+              setVideoIndex={setVideoIndex}
             />
           </div>
         </div>

@@ -1,6 +1,38 @@
+import { useState, useRef, useEffect } from "react";
 import { BsSoundwave } from "react-icons/bs";
 
-export default function InterviewerCamera() {
+export default function InterviewerCamera({
+  videoIndex,
+}: {
+  videoIndex: number;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const videoSources = [
+    "/result_voice1.mp4",
+    "/result_voice2.mp4",
+    "/result_voice3.mp4",
+    "/result_voice4.mp4",
+  ];
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.src = videoSources[videoIndex];
+      videoRef.current.load();
+      videoRef.current.play().catch((error) => {
+        console.error("Failed to play video:", error.message);
+      });
+    }
+  }, [videoIndex]);
+
+  const hideDefaultControls = (
+    event: React.SyntheticEvent<HTMLVideoElement, Event>
+  ) => {
+    event.preventDefault();
+    if (videoRef.current) {
+      videoRef.current.controls = false;
+    }
+  };
+
   return (
     <div className="relative">
       <svg className="absolute top-[-999px] left-[-999px] w-0 h-0">
@@ -19,7 +51,15 @@ export default function InterviewerCamera() {
         className="clipped-content"
         style={{ clipPath: "url(#interviewer-clip)" }}
       >
-        <div className="w-[100%] aspect-[1064/659] bg-red-300"></div>
+        <video
+          ref={videoRef}
+          className="w-[100%] aspect-[1064/659]"
+          autoPlay
+          onLoadedMetadata={hideDefaultControls}
+        >
+          <source src={videoSources[videoIndex]} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
       </div>
       <div className="flex justify-center items-center top-[10px] right-[10px] absolute w-[37px] aspect-square bg-[#6E87ED] rounded-[50%]">
         <BsSoundwave className="text-white" />

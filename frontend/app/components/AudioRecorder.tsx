@@ -16,12 +16,16 @@ const AudioRecorder = ({
   setResponseAudio,
   isDone,
   numberQuestions,
+  videoIndex,
+  setVideoIndex,
 }: {
   sessionID: string | null;
   setResponseText: Dispatch<SetStateAction<string>>;
   setResponseAudio: Dispatch<SetStateAction<any>>;
   isDone: boolean;
   numberQuestions: string | null;
+  videoIndex: number;
+  setVideoIndex: Dispatch<SetStateAction<number>>;
 }) => {
   const [permission, setPermission] = useState(false);
   const [stream, setStream] = useState<MediaStream | null>(null);
@@ -121,6 +125,7 @@ const AudioRecorder = ({
             console.error("Error fetching interview_loop:", error.message);
           } finally {
             setFetchingResponse(false);
+            setVideoIndex((videoIndex + 1) % 4);
           }
         } else {
           console.log("No session ID");
@@ -133,9 +138,12 @@ const AudioRecorder = ({
   };
 
   const stopRecording = () => {
+    const random = Math.floor(Math.random() * (15 - 10 + 1)) + 10;
     if (mediaRecorder.current && recordingStatus === "recording") {
       mediaRecorder.current.stop();
       setRecordingStatus("inactive");
+      //  setTimeout(() => {
+      //  }, random * 1000);
     }
   };
 
@@ -201,7 +209,7 @@ const AudioRecorder = ({
             ) : null}
             {recordingStatus === "recording" ? (
               <button
-                className="flex flex-row items-center gap-x-[7px] py-[10px] px-[15px] bg-[#6E87ED] rounded-[10px] text-white font-medium"
+                className="flex flex-row items-center gap-x-[12px] py-[10px] px-[15px] bg-[#6E87ED] rounded-[10px] text-white font-medium"
                 onClick={stopRecording}
                 type="button"
               >
