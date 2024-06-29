@@ -1,4 +1,5 @@
-<iframe width="560" height="315" src="https://youtu.be/DE7jh48WR6M" frameborder="0" allowfullscreen></iframe>
+## Demo Video
+[![Demo Video](thumbnail.png)](https://youtu.be/DE7jh48WR6M)
 
 
 ## Make virtual environment
