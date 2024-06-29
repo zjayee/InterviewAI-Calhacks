@@ -1,7 +1,4 @@
-<video width="320" height="240" controls>
-  <source src="interview.ai.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+[![Demo Video]](https://youtu.be/DE7jh48WR6M)
 
 
 ## Make virtual environment
