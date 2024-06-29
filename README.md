@@ -1,4 +1,4 @@
-[![Interview.ai Demo]](interview.ai.mp4)
+![](interview.ai.mp4)
 
 
 ## Make virtual environment
