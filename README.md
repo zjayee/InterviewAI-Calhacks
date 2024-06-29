@@ -1,3 +1,5 @@
+[![Interview.ai Demo](thumbnail.png)](interview.ai.mp4.mp4)
+
 
 ## Make virtual environment
 python3 -m venv env
@@ -8,4 +10,5 @@ place .env file in calhacks/ folder
 
 ## Run server
 python manage.py runserver
+
 
